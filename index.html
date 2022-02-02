@@ -473,9 +473,10 @@ function drawMap(data){
 		d3.selectAll(".mapboxgl-ctrl-logo").remove()
 		
 			 //map.setPaintProperty("tracts_hover", "line-opacity",0)
-		map.on('mousemove', 'tracts', (e) => {
+		map.on('mousemove',(e) => {
+			var features = map.queryRenderedFeatures(e.point,{layers: ['tracts']});
 			
-				if (e.features.length > 0) {
+				if (features.length > 0) {
 					//  if (hoveredStateId !== null) {
 // 						map.setFeatureState(
 //  							{ source: 'tracts', id: hoveredStateId },
@@ -489,8 +490,10 @@ function drawMap(data){
 //  						{ hover: true }
 //  					);
 			
-				var features = e.features[0]
-				var geoId = String(features.properties.GEOID)
+				var feature = features[0]
+
+				var geoId = String(feature.properties.GEOID)
+
 				var totalAsians =parseInt(tractDictionary[geoId]["ACS19_5yr_B02018001"])
 				var totalPop = parseInt(tractTotalsDictionary[geoId]["SE_A00001_001"])
 				d3.select("#onScreen").html("Tract "+geoId+"<br>Total Asian Population: "+numberWithCommas(totalAsians))
@@ -520,12 +523,12 @@ function drawMap(data){
 // 					for(var n in nationLabels){
 // 							d3.select("#onScreen_"+n).html("--")
 // 					}
-// 				}
-			}
-			d3.select("#mapPopup").style("height",numberOfNations*12+30+"px")
-			
-			d3.select("#mapPopup").style("left",window.event.clientX+20+"px")
-			d3.select("#mapPopup").style("top",window.event.clientY+"px")
+ 				}			//
+			// }
+			d3.select("#mapPopup").style("height","400px")
+			//
+			 d3.select("#mapPopup").style("left",window.event.clientX+20+"px")
+			 d3.select("#mapPopup").style("top",window.event.clientY+"px")
 			d3.select("#mapPopup").style("visibility","visible")
 			
 		})
