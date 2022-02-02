@@ -459,15 +459,15 @@ function drawMap(data){
   // 		  	 	 'line-color': '#000000',
   // 		  	 	 'line-opacity': ['case',['boolean', ['feature-state', 'hover'], false],1,0]
   // 		  	 	 }
-  // 		  	 	 });
-		console.log(map.getStyle().layers)
-		console.log(map.getLayer('tracts').source)
-		console.log(map.getStyle().sources)
-map.setPaintProperty("tracts",'line-opacity', ['case',['boolean', ['feature-state', 'hover'],false],1,0])
+  // 		  	 	 });		//
+		// console.log(map.getStyle().layers)
+		// console.log(map.getLayer('tracts').source)
+		// console.log(map.getStyle().sources)
+//map.setPaintProperty("tracts",'line-opacity', ['case',['boolean', ['feature-state', 'hover'],false],1,0])
 		
 		var hoveredStateId = null
-			map.setPaintProperty("tracts", "line-opacity",0.1)
-			  map.setPaintProperty("tracts", "line-color","red")
+			// map.setPaintProperty("tracts", "line-opacity",0.1)
+//			  map.setPaintProperty("tracts", "line-color","red")
 		
     	drawKey(data[0][0],data[1])
 		d3.selectAll(".mapboxgl-ctrl-logo").remove()
@@ -500,9 +500,14 @@ map.setPaintProperty("tracts",'line-opacity', ['case',['boolean', ['feature-stat
 					var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
 					var nations = ""
 					var numberOfNations = 0
-					for(var n in nationLabels){
-						var label = nationLabels[n]
-						var value = tractDictionary[geoId]["ACS19_5yr_"+n]
+					var nations = Object.keys(nationLabels).sort(function(a,b){
+						return tractDictionary[geoId]["ACS19_5yr_"+b]-tractDictionary[geoId]["ACS19_5yr_"+a]
+					})
+					
+					
+					for(var n in nations){
+						var label = nationLabels[nations[n]]
+						var value = tractDictionary[geoId]["ACS19_5yr_"+nations[n]]
 						var percent = Math.round(value/totalAsians*10000)/100+"%"
 						// d3.select("#onScreen_"+n).html(percent)
 						if(percent!="0%"){
@@ -533,34 +538,34 @@ map.setPaintProperty("tracts",'line-opacity', ['case',['boolean', ['feature-stat
 					
 					 map.setPaintProperty(layerId,'circle-radius',.8)
 					 map.setPaintProperty(layerId,'circle-opacity',{'base': 1,'stops': [[4, 1],[9, 1],[11, 1]]})
-					  map.setPaintProperty(layerId, "circle-color", ['match',
-							['get', 'nation'],
-							 "ACS19_5yr_B02018002",colorDictionary[nationLabels["B02018002"]],
-							"ACS19_5yr_B02018003",colorDictionary[nationLabels["B02018003"]],
-							"ACS19_5yr_B02018004",colorDictionary[nationLabels["B02018004"]],
-							"ACS19_5yr_B02018005",colorDictionary[nationLabels["B02018005"]],
-							"ACS19_5yr_B02018006",colorDictionary[nationLabels["B02018006"]],
-							"ACS19_5yr_B02018007",colorDictionary[nationLabels["B02018007"]],
-							"ACS19_5yr_B02018008",colorDictionary[nationLabels["B02018008"]],
-							"ACS19_5yr_B02018009",colorDictionary[nationLabels["B02018009"]],
-							"ACS19_5yr_B02018010",colorDictionary[nationLabels["B02018010"]],
-							"ACS19_5yr_B02018011",colorDictionary[nationLabels["B02018011"]],
-							"ACS19_5yr_B02018012",colorDictionary[nationLabels["B02018012"]],
-							"ACS19_5yr_B02018013",colorDictionary[nationLabels["B02018013"]],
-							"ACS19_5yr_B02018014",colorDictionary[nationLabels["B02018014"]],
-							"ACS19_5yr_B02018015",colorDictionary[nationLabels["B02018015"]],
-							"ACS19_5yr_B02018016",colorDictionary[nationLabels["B02018016"]],
-							"ACS19_5yr_B02018017",colorDictionary[nationLabels["B02018017"]],
-							"ACS19_5yr_B02018018",colorDictionary[nationLabels["B02018018"]],
-							"ACS19_5yr_B02018019",colorDictionary[nationLabels["B02018019"]],
-							"ACS19_5yr_B02018020",colorDictionary[nationLabels["B02018020"]],
-							"ACS19_5yr_B02018021",colorDictionary[nationLabels["B02018021"]],
-							"ACS19_5yr_B02018022",colorDictionary[nationLabels["B02018022"]],
-							"ACS19_5yr_B02018023",colorDictionary[nationLabels["B02018023"]],
-							"ACS19_5yr_B02018024",colorDictionary[nationLabels["B02018024"]],
-							/* other */ '#888888']
- 
-  					 )
+					  // map.setPaintProperty(layerId, "circle-color", ['match',
+  // 							['get', 'nation'],
+  // 							 "ACS19_5yr_B02018002",colorDictionary[nationLabels["B02018002"]],
+  // 							"ACS19_5yr_B02018003",colorDictionary[nationLabels["B02018003"]],
+  // 							"ACS19_5yr_B02018004",colorDictionary[nationLabels["B02018004"]],
+  // 							"ACS19_5yr_B02018005",colorDictionary[nationLabels["B02018005"]],
+  // 							"ACS19_5yr_B02018006",colorDictionary[nationLabels["B02018006"]],
+  // 							"ACS19_5yr_B02018007",colorDictionary[nationLabels["B02018007"]],
+  // 							"ACS19_5yr_B02018008",colorDictionary[nationLabels["B02018008"]],
+  // 							"ACS19_5yr_B02018009",colorDictionary[nationLabels["B02018009"]],
+  // 							"ACS19_5yr_B02018010",colorDictionary[nationLabels["B02018010"]],
+  // 							"ACS19_5yr_B02018011",colorDictionary[nationLabels["B02018011"]],
+  // 							"ACS19_5yr_B02018012",colorDictionary[nationLabels["B02018012"]],
+  // 							"ACS19_5yr_B02018013",colorDictionary[nationLabels["B02018013"]],
+  // 							"ACS19_5yr_B02018014",colorDictionary[nationLabels["B02018014"]],
+  // 							"ACS19_5yr_B02018015",colorDictionary[nationLabels["B02018015"]],
+  // 							"ACS19_5yr_B02018016",colorDictionary[nationLabels["B02018016"]],
+  // 							"ACS19_5yr_B02018017",colorDictionary[nationLabels["B02018017"]],
+  // 							"ACS19_5yr_B02018018",colorDictionary[nationLabels["B02018018"]],
+  // 							"ACS19_5yr_B02018019",colorDictionary[nationLabels["B02018019"]],
+  // 							"ACS19_5yr_B02018020",colorDictionary[nationLabels["B02018020"]],
+  // 							"ACS19_5yr_B02018021",colorDictionary[nationLabels["B02018021"]],
+  // 							"ACS19_5yr_B02018022",colorDictionary[nationLabels["B02018022"]],
+  // 							"ACS19_5yr_B02018023",colorDictionary[nationLabels["B02018023"]],
+  // 							"ACS19_5yr_B02018024",colorDictionary[nationLabels["B02018024"]],
+  // 							/* other */ '#888888']
+  //
+  // 					 )
 				 }
  		   		}
 
