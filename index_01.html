@@ -480,15 +480,15 @@ function drawMap(data){
 	 	}
 	 	});
 		
-		var hoveredStateId = null
-			map.setPaintProperty("tracts", "line-opacity",0)
-			  map.setPaintProperty("tracts", "line-color","#000000")
+		var hoveredStateId = null			//
+			// map.setPaintProperty("tracts", "line-opacity",0)
+			//   map.setPaintProperty("tracts", "line-color","#000000")
 		
     	drawKey(data[0][0],data[1])
 		d3.selectAll(".mapboxgl-ctrl-logo").remove()
 		
 			 //map.setPaintProperty("tracts_hover", "line-opacity",0)
-		map.on('mousemove', 'tract_test', (e) => {
+		map.on('mouseenter', 'tract_test', (e) => {
 			
 				if (e.features.length > 0) {
 					if (hoveredStateId !== null) {
@@ -535,23 +535,6 @@ function drawMap(data){
 						}	
 					}
 			
-				// if(totalPop!=0 && totalAsians!=0){
-// 					//console.log("data not 0")
-// 					var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
-// 					var nations = ""
-// 					var numberOfNations = 0
-// 					for(var n in nationLabels){
-// 						var label = nationLabels[n]
-// 						var value = tractDictionary[geoId]["ACS19_5yr_"+n]
-// 						var percent = Math.round(value/totalAsians*10000)/100+"%"
-// 						// d3.select("#onScreen_"+n).html(percent)
-// 						if(percent!="0%"){
-// 							numberOfNations+=1
-// 							d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
-// 							d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
-// 						}
-// 					}
-// 				}
 			}
 			d3.select("#mapPopup").style("height",numberOfNations*12+30+"px")
 			d3.select("#mapPopup").style("width","200px")
@@ -567,7 +550,6 @@ function drawMap(data){
  		  	 for(var l =0;l<6;l++){
  		   			var layerId = "group-"+l
 				 if(layerId!="mapbox-satellite"&& layerId!="background"&& layerId!="country-boundaries"){
-				 //	console.log(layerId)
 					
 					 map.setPaintProperty(layerId,'circle-radius',.8)
 					 map.setPaintProperty(layerId,'circle-opacity',{'base': 1,'stops': [[4, 1],[9, 1],[11, 1]]})
