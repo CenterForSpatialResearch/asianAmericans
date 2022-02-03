@@ -257,7 +257,7 @@ var nationLabels ={"B02018002":"Asian Indian",
 var country = d3.csv("R12930229_SL010.csv")
 var tractAsians = d3.csv("R12929173_SL140_reduced_nations.csv")
 var tractTotals = d3.csv("R12931419_SL140.csv")
-//var tractsGeo = d3.json("tracts_simplified_withId.geojson")
+// var tractsGeo = d3.json("tracts_simplified_withId.geojson")
 //var centroids = d3.json("highestCentroids.geojson")
 	   var countyCentroids = d3.csv("countyCentroids.csv")
 
@@ -266,7 +266,7 @@ var centroidsByCounty
 Promise.all([country,tractAsians,tractTotals,countyCentroids])
 .then(function(data){
 	
-	centroidsByCounty = countyDictionary(data[3])
+	centroidsByCounty = countyDictionary(data[4])
 	//console.log(centroidsByCounty)
     drawMap(data)
 })
@@ -278,6 +278,20 @@ function countyDictionary(data){
 	}
 	return formatted
 }
+// function getTopCounties(){
+// 	for(var l in top100Tracts){
+// 		var layer = l
+// 		console.log(layer)
+// 		var tracts = top100Tracts[l]
+// 		for(var c in tracts){
+// 			var county = tracts[c].slice(0,5)
+// 			console.log(county)
+// 			break
+// 		}
+// 		break
+// 	}
+//
+// }
 function makeTractDictionary(data){
 	var dict ={}
 	for(var i in data){
@@ -444,92 +458,90 @@ function drawMap(data){
 			}
 		})
 		
-		  // map.addSource('tract_simple', {
-  // 		  	 			'type': 'vector',
-  // 		  			 'url':"mapbox://c4sr-gsapp.0aqurp84"
-  // 		  	 	});
-  //
-  // 		  	 	map.addLayer({
-  // 		  	 	'id': 'tracts_outline',
-  // 		  	 	'type': 'line',
-  // 		  	 	'source': 'tract_simple',
-  // 		  	 	'layout': {},
-  // 		  	 	 'paint': {
-  // 		  	 	 'line-width':3,
-  // 		  	 	 'line-color': '#000000',
-  // 		  	 	 'line-opacity': ['case',['boolean', ['feature-state', 'hover'], false],1,0]
-  // 		  	 	 }
-  // 		  	 	 });		//
-		// console.log(map.getStyle().layers)
-		// console.log(map.getLayer('tracts').source)
-		// console.log(map.getStyle().sources)
-//map.setPaintProperty("tracts",'line-opacity', ['case',['boolean', ['feature-state', 'hover'],false],1,0])
+		 map.addSource('tract_simple', {
+	 			'type': 'geojson',
+			 'data':"tracts_simplified_withId.geojson"
+	 	});
+	
+	 	map.addLayer({
+	 	'id': 'tract_test',
+	 	'type': 'line',
+	 	'source': 'tract_simple',
+	 	'layout': {},
+	 	'paint': {
+	 	'line-width':1,
+	 	'line-color': '#000000',
+	 	'line-opacity': [
+	 	'case',
+	 	['boolean', ['feature-state', 'hover'], false],
+	 	1,
+	 	0
+	 	]
+	 	}
+	 	});
 		
-		var hoveredStateId = null
-			// map.setPaintProperty("tracts", "line-opacity",0.1)
-//			  map.setPaintProperty("tracts", "line-color","red")
+		var hoveredStateId = null			//
+			// map.setPaintProperty("tracts", "line-opacity",0)
+			//   map.setPaintProperty("tracts", "line-color","#000000")
 		
     	drawKey(data[0][0],data[1])
 		d3.selectAll(".mapboxgl-ctrl-logo").remove()
 		
 			 //map.setPaintProperty("tracts_hover", "line-opacity",0)
-		map.on('mousemove',(e) => {
-			var features = map.queryRenderedFeatures(e.point,{layers: ['tracts']});
+		map.on('mouseenter', 'tract_test', (e) => {
 			
-				if (features.length > 0) {
-					//  if (hoveredStateId !== null) {
-// 						map.setFeatureState(
-//  							{ source: 'tracts', id: hoveredStateId },
-// 							{ hover: false }
-//  						);
-// 					}
-//  					hoveredStateId = e.features[0].id;
-// // 					//console.log(hoverStateId)
-//  					map.setFeatureState(
-//  						{ source: 'tracts', id: hoveredStateId },
-//  						{ hover: true }
-//  					);
+				if (e.features.length > 0) {
+					if (hoveredStateId !== null) {
+						map.setFeatureState(
+							{ source: 'tract_simple', id: hoveredStateId },
+							{ hover: false }
+						);
+					}
+					hoveredStateId = e.features[0].id;
+					//console.log(hoverStateId)
+					map.setFeatureState(
+						{ source: 'tract_simple', id: hoveredStateId },
+						{ hover: true }
+					);
 			
-				var feature = features[0]
-
-				var geoId = String(feature.properties.GEOID)
-
+				var features = e.features[0]
+				var geoId = String(features.properties.GEOID)
 				var totalAsians =parseInt(tractDictionary[geoId]["ACS19_5yr_B02018001"])
 				var totalPop = parseInt(tractTotalsDictionary[geoId]["SE_A00001_001"])
 				d3.select("#onScreen").html("Tract "+geoId+"<br>Total Asian Population: "+numberWithCommas(totalAsians))
 			
-				if(totalPop!=0 && totalAsians!=0){					
-					//console.log("data not 0")
-					var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
-					var nations = ""
-					var numberOfNations = 0
-					var nations = Object.keys(nationLabels).sort(function(a,b){
-						return tractDictionary[geoId]["ACS19_5yr_"+b]-tractDictionary[geoId]["ACS19_5yr_"+a]
-					})
+			
+			
+					if(totalPop!=0 && totalAsians!=0){					
+						//console.log("data not 0")
+						var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
+						var nations = ""
+						var numberOfNations = 0
+						var nations = Object.keys(nationLabels).sort(function(a,b){
+							return tractDictionary[geoId]["ACS19_5yr_"+b]-tractDictionary[geoId]["ACS19_5yr_"+a]
+						})
 					
 					
-					for(var n in nations){
-						var label = nationLabels[nations[n]]
-						var value = tractDictionary[geoId]["ACS19_5yr_"+nations[n]]
-						var percent = Math.round(value/totalAsians*10000)/100+"%"
-						// d3.select("#onScreen_"+n).html(percent)
-						if(percent!="0%"){
-							numberOfNations+=1
-							d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
-							d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
-						}
-					}	
-				}// else{
-// 					for(var n in nationLabels){
-// 							d3.select("#onScreen_"+n).html("--")
-// 					}
- 				}			//
-			// }
-			d3.select("#mapPopup").style("height","400px")
+						for(var n in nations){
+							var label = nationLabels[nations[n]]
+							var value = tractDictionary[geoId]["ACS19_5yr_"+nations[n]]
+							var percent = Math.round(value/totalAsians*10000)/100+"%"
+							// d3.select("#onScreen_"+n).html(percent)
+							if(percent!="0%"){
+								numberOfNations+=1
+								d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
+								d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
+							}
+						}	
+					}
+			
+			}
+			d3.select("#mapPopup").style("height",numberOfNations*12+30+"px")
 			d3.select("#mapPopup").style("width","200px")
-			//
-			 d3.select("#mapPopup").style("left",window.event.clientX+20+"px")
-			 d3.select("#mapPopup").style("top",window.event.clientY+"px")
+			d3.select("#mapPopup").style("background-color","rgba(255,255,255,.8)")
+			
+			d3.select("#mapPopup").style("left",window.event.clientX+20+"px")
+			d3.select("#mapPopup").style("top",window.event.clientY+"px")
 			d3.select("#mapPopup").style("visibility","visible")
 			
 		})
@@ -538,38 +550,9 @@ function drawMap(data){
  		  	 for(var l =0;l<6;l++){
  		   			var layerId = "group-"+l
 				 if(layerId!="mapbox-satellite"&& layerId!="background"&& layerId!="country-boundaries"){
-				 //	console.log(layerId)
 					
 					 map.setPaintProperty(layerId,'circle-radius',.8)
 					 map.setPaintProperty(layerId,'circle-opacity',{'base': 1,'stops': [[4, 1],[9, 1],[11, 1]]})
-					  // map.setPaintProperty(layerId, "circle-color", ['match',
-  // 							['get', 'nation'],
-  // 							 "ACS19_5yr_B02018002",colorDictionary[nationLabels["B02018002"]],
-  // 							"ACS19_5yr_B02018003",colorDictionary[nationLabels["B02018003"]],
-  // 							"ACS19_5yr_B02018004",colorDictionary[nationLabels["B02018004"]],
-  // 							"ACS19_5yr_B02018005",colorDictionary[nationLabels["B02018005"]],
-  // 							"ACS19_5yr_B02018006",colorDictionary[nationLabels["B02018006"]],
-  // 							"ACS19_5yr_B02018007",colorDictionary[nationLabels["B02018007"]],
-  // 							"ACS19_5yr_B02018008",colorDictionary[nationLabels["B02018008"]],
-  // 							"ACS19_5yr_B02018009",colorDictionary[nationLabels["B02018009"]],
-  // 							"ACS19_5yr_B02018010",colorDictionary[nationLabels["B02018010"]],
-  // 							"ACS19_5yr_B02018011",colorDictionary[nationLabels["B02018011"]],
-  // 							"ACS19_5yr_B02018012",colorDictionary[nationLabels["B02018012"]],
-  // 							"ACS19_5yr_B02018013",colorDictionary[nationLabels["B02018013"]],
-  // 							"ACS19_5yr_B02018014",colorDictionary[nationLabels["B02018014"]],
-  // 							"ACS19_5yr_B02018015",colorDictionary[nationLabels["B02018015"]],
-  // 							"ACS19_5yr_B02018016",colorDictionary[nationLabels["B02018016"]],
-  // 							"ACS19_5yr_B02018017",colorDictionary[nationLabels["B02018017"]],
-  // 							"ACS19_5yr_B02018018",colorDictionary[nationLabels["B02018018"]],
-  // 							"ACS19_5yr_B02018019",colorDictionary[nationLabels["B02018019"]],
-  // 							"ACS19_5yr_B02018020",colorDictionary[nationLabels["B02018020"]],
-  // 							"ACS19_5yr_B02018021",colorDictionary[nationLabels["B02018021"]],
-  // 							"ACS19_5yr_B02018022",colorDictionary[nationLabels["B02018022"]],
-  // 							"ACS19_5yr_B02018023",colorDictionary[nationLabels["B02018023"]],
-  // 							"ACS19_5yr_B02018024",colorDictionary[nationLabels["B02018024"]],
-  // 							/* other */ '#888888']
-  //
-  // 					 )
 				 }
  		   		}
 
@@ -692,9 +675,7 @@ function drawKey(data,tracts){
 			.style("color",colorDictionary[nationLabels[sorted[s].nation]])
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
-			
-			
-			
+
 			row.append("td").html(numberWithCommas(sorted[s].pop))
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
@@ -702,14 +683,6 @@ function drawKey(data,tracts){
 			row.append("td").html(sorted[s].percent+"%")
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
-			
-			
-		//	row.append("td").html("").attr("id","onScreen_"+sorted[s].nation)
-		//	.style("font-weight",700).attr("class","onScreen")
-			//.attr("id",sorted[s].nation)
-		//	.attr("class","nationRow")
-			
-			
 		}
 }
 		   
