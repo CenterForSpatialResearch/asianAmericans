@@ -458,27 +458,27 @@ function drawMap(data){
 			}
 		})
 		
-		map.addSource('tract_simple', {
-				'type': 'geojson',
-			'data':tractShape
-		});
-		
-		map.addLayer({
-		'id': 'tract_test',
-		'type': 'line',
-		'source': 'tract_simple',
-		'layout': {},
-		'paint': {
-		'line-width':1,
-		'line-color': '#000000',
-		'line-opacity': [
-		'case',
-		['boolean', ['feature-state', 'hover'], false],
-		1,
-		0
-		]
-		}
-		});
+		 map.addSource('tract_simple', {
+	 			'type': 'geojson',
+	 		'data':tractShape
+	 	});
+	
+	 	map.addLayer({
+	 	'id': 'tract_test',
+	 	'type': 'line',
+	 	'source': 'tract_simple',
+	 	'layout': {},
+	 	'paint': {
+	 	'line-width':1,
+	 	'line-color': '#000000',
+	 	'line-opacity': [
+	 	'case',
+	 	['boolean', ['feature-state', 'hover'], false],
+	 	1,
+	 	0
+	 	]
+	 	}
+	 	});
 		
 		var hoveredStateId = null
 			map.setPaintProperty("tracts", "line-opacity",0)
@@ -510,25 +510,46 @@ function drawMap(data){
 				var totalPop = parseInt(tractTotalsDictionary[geoId]["SE_A00001_001"])
 				d3.select("#onScreen").html("Tract "+geoId+"<br>Total Asian Population: "+numberWithCommas(totalAsians))
 			
-				if(totalPop!=0 && totalAsians!=0){					
-					//console.log("data not 0")
-					var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
-					var nations = ""
-					var numberOfNations = 0
-					for(var n in nationLabels){
-						var label = nationLabels[n]
-						var value = tractDictionary[geoId]["ACS19_5yr_"+n]
-						var percent = Math.round(value/totalAsians*10000)/100+"%"
-						// d3.select("#onScreen_"+n).html(percent)
-						if(percent!="0%"){
-							numberOfNations+=1
-							d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
-							d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
-						}
-					}	
-				}// else{
+			
+			
+					if(totalPop!=0 && totalAsians!=0){					
+						//console.log("data not 0")
+						var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
+						var nations = ""
+						var numberOfNations = 0
+						var nations = Object.keys(nationLabels).sort(function(a,b){
+							return tractDictionary[geoId]["ACS19_5yr_"+b]-tractDictionary[geoId]["ACS19_5yr_"+a]
+						})
+					
+					
+						for(var n in nations){
+							var label = nationLabels[nations[n]]
+							var value = tractDictionary[geoId]["ACS19_5yr_"+nations[n]]
+							var percent = Math.round(value/totalAsians*10000)/100+"%"
+							// d3.select("#onScreen_"+n).html(percent)
+							if(percent!="0%"){
+								numberOfNations+=1
+								d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
+								d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
+							}
+						}	
+					}
+			
+				// if(totalPop!=0 && totalAsians!=0){
+// 					//console.log("data not 0")
+// 					var percentAsians = Math.round(totalAsians/totalPop*10000)/100+"%"
+// 					var nations = ""
+// 					var numberOfNations = 0
 // 					for(var n in nationLabels){
-// 							d3.select("#onScreen_"+n).html("--")
+// 						var label = nationLabels[n]
+// 						var value = tractDictionary[geoId]["ACS19_5yr_"+n]
+// 						var percent = Math.round(value/totalAsians*10000)/100+"%"
+// 						// d3.select("#onScreen_"+n).html(percent)
+// 						if(percent!="0%"){
+// 							numberOfNations+=1
+// 							d3.select("#onScreen").append("div").attr("id","onScreen_"+n)
+// 							d3.select("#onScreen_"+n).html(label+": "+percent).style("color",colorDictionary[label])
+// 						}
 // 					}
 // 				}
 			}
@@ -548,34 +569,6 @@ function drawMap(data){
 					
 					 map.setPaintProperty(layerId,'circle-radius',.8)
 					 map.setPaintProperty(layerId,'circle-opacity',{'base': 1,'stops': [[4, 1],[9, 1],[11, 1]]})
-					  map.setPaintProperty(layerId, "circle-color", ['match',
-							['get', 'nation'],
-							 "ACS19_5yr_B02018002",colorDictionary[nationLabels["B02018002"]],
-							"ACS19_5yr_B02018003",colorDictionary[nationLabels["B02018003"]],
-							"ACS19_5yr_B02018004",colorDictionary[nationLabels["B02018004"]],
-							"ACS19_5yr_B02018005",colorDictionary[nationLabels["B02018005"]],
-							"ACS19_5yr_B02018006",colorDictionary[nationLabels["B02018006"]],
-							"ACS19_5yr_B02018007",colorDictionary[nationLabels["B02018007"]],
-							"ACS19_5yr_B02018008",colorDictionary[nationLabels["B02018008"]],
-							"ACS19_5yr_B02018009",colorDictionary[nationLabels["B02018009"]],
-							"ACS19_5yr_B02018010",colorDictionary[nationLabels["B02018010"]],
-							"ACS19_5yr_B02018011",colorDictionary[nationLabels["B02018011"]],
-							"ACS19_5yr_B02018012",colorDictionary[nationLabels["B02018012"]],
-							"ACS19_5yr_B02018013",colorDictionary[nationLabels["B02018013"]],
-							"ACS19_5yr_B02018014",colorDictionary[nationLabels["B02018014"]],
-							"ACS19_5yr_B02018015",colorDictionary[nationLabels["B02018015"]],
-							"ACS19_5yr_B02018016",colorDictionary[nationLabels["B02018016"]],
-							"ACS19_5yr_B02018017",colorDictionary[nationLabels["B02018017"]],
-							"ACS19_5yr_B02018018",colorDictionary[nationLabels["B02018018"]],
-							"ACS19_5yr_B02018019",colorDictionary[nationLabels["B02018019"]],
-							"ACS19_5yr_B02018020",colorDictionary[nationLabels["B02018020"]],
-							"ACS19_5yr_B02018021",colorDictionary[nationLabels["B02018021"]],
-							"ACS19_5yr_B02018022",colorDictionary[nationLabels["B02018022"]],
-							"ACS19_5yr_B02018023",colorDictionary[nationLabels["B02018023"]],
-							"ACS19_5yr_B02018024",colorDictionary[nationLabels["B02018024"]],
-							/* other */ '#888888']
- 
-  					 )
 				 }
  		   		}
 
@@ -698,9 +691,7 @@ function drawKey(data,tracts){
 			.style("color",colorDictionary[nationLabels[sorted[s].nation]])
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
-			
-			
-			
+
 			row.append("td").html(numberWithCommas(sorted[s].pop))
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
@@ -708,14 +699,6 @@ function drawKey(data,tracts){
 			row.append("td").html(sorted[s].percent+"%")
 			.attr("id",sorted[s].nation)
 			.attr("class","nationRow")
-			
-			
-		//	row.append("td").html("").attr("id","onScreen_"+sorted[s].nation)
-		//	.style("font-weight",700).attr("class","onScreen")
-			//.attr("id",sorted[s].nation)
-		//	.attr("class","nationRow")
-			
-			
 		}
 }
 		   
