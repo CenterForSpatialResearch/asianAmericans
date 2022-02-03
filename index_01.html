@@ -257,13 +257,13 @@ var nationLabels ={"B02018002":"Asian Indian",
 var country = d3.csv("R12930229_SL010.csv")
 var tractAsians = d3.csv("R12929173_SL140_reduced_nations.csv")
 var tractTotals = d3.csv("R12931419_SL140.csv")
-var tractsGeo = d3.json("tracts_simplified_withId.geojson")
+// var tractsGeo = d3.json("tracts_simplified_withId.geojson")
 //var centroids = d3.json("highestCentroids.geojson")
 	   var countyCentroids = d3.csv("countyCentroids.csv")
 
 var map
 var centroidsByCounty
-Promise.all([country,tractAsians,tractTotals,tractsGeo,countyCentroids])
+Promise.all([country,tractAsians,tractTotals,countyCentroids])
 .then(function(data){
 	
 	centroidsByCounty = countyDictionary(data[4])
@@ -369,7 +369,7 @@ function drawMap(data){
 	var tracts = data[1]
 	var tractDictionary = makeTractDictionary(tracts)
 	var tractTotalsDictionary = makeTractDictionary(data[2])
-	var tractShape = data[3]
+	//var tractShape = data[3]
 	//var highestCentroids = data[4]
 	//console.log(highestCentroids)
 		//console.log(tractDictionary)
@@ -460,7 +460,7 @@ function drawMap(data){
 		
 		 map.addSource('tract_simple', {
 	 			'type': 'geojson',
-	 		'data':tractShape
+			 'data':"tracts_simplified_withId.geojson"
 	 	});
 	
 	 	map.addLayer({
@@ -554,6 +554,8 @@ function drawMap(data){
 // 				}
 			}
 			d3.select("#mapPopup").style("height",numberOfNations*12+30+"px")
+			d3.select("#mapPopup").style("width","200px")
+			d3.select("#mapPopup").style("background-color","rgba(255,255,255,.8)")
 			
 			d3.select("#mapPopup").style("left",window.event.clientX+20+"px")
 			d3.select("#mapPopup").style("top",window.event.clientY+"px")
